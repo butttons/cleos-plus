@@ -1,11 +1,17 @@
 # cleos-js
 A helper tool to help develop EOS smart contracts.
 
+## Installation:
+
+```
+npm i -g cleos-js
+```
+
 ## Why?
 Deploying a smart contract for development involves a lot of steps, which are fairly mundane. This tool will help you with some of the plumbing. 
 You can use this tool to speed up your development process. To deploy a contract, you simply need to create the cpp files and, this will handle the compiling and deployment part for you.
 
-## Prerequisites
+## Prerequisites:
 - Locally running eosio node. More info on how to get started here - [EOS Docker Quickstart](https://developers.eos.io/eosio-nodeos/docs/docker-quickstart).
 - One account on the blockchain. [How to create an account](https://developers.eos.io/eosio-home/docs/accounts-1).
 - [eosio.cdt](https://github.com/EOSIO/eosio.cdt).
@@ -13,7 +19,7 @@ You can use this tool to speed up your development process. To deploy a contract
 ## How to use:
 - Create a config file first by `cleos-js -i`
 - Edit the file: 
-```json
+```
 {
     "api": "http://localhost:7777", // The HTTP endpoint for EOS node
     "contractDir": "", // Absolute path to the directory having contracts
