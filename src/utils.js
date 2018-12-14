@@ -29,7 +29,10 @@ const isContractDir = (dir) => {
     const currentDir = path.parse(dir);
     const contractName = currentDir.name;
     const hasCpp = files.includes(`${contractName}.cpp`);
-    return hasCpp ? contractName : false;
+    return {
+        contractName,
+        validDir: hasCpp
+    };
 };
 
 const initConfig = (fileName = 'jseos.config.json') => {
@@ -37,8 +40,8 @@ const initConfig = (fileName = 'jseos.config.json') => {
         api: 'http://localhost:7777',
         contractDir: '',
         owner: {
-            name: '',
-            key: ''
+            name: 'eosio',
+            key: '5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'
         }
     };
     const fullPath = path.resolve(process.cwd(), fileName);
