@@ -15,7 +15,7 @@ const path = require('path');
         list: cli.flags.list,
         createAccount: flagKeys.includes('createAccount'),
         deployContract: flagKeys.includes('deployName'),
-        deployThis: cli.flags.deploy,
+        deployThis: flagKeys.includes('deploy'),
         init: cli.flags.init,
         configSet: flagKeys.includes('config'),
         configView: cli.flags.viewConfig
@@ -59,11 +59,15 @@ const path = require('path');
             return;
         }
         logger.time('deploy contract');
-        const contractName = isContractDir(process.cwd());
-        if (!contractName) {
+        const accountName = cli.flags.deploy;
+        const accountNameProvided = accountName.length > 0;
+        const { validDir, contractName } = isContractDir(process.cwd());
+        const deployAccount = accountNameProvided ? accountName : contractName;
+        if (!validDir) {
             logger.warn(`This doesn't appear to be a contract directory. No '${contractName}.cpp' file found.`);
         } else {
-            await eos.deployContract(contractName, contractName);
+            logger.info(`Deploying to account: ${deployAccount}`);
+            await eos.deployContract(deployAccount, contractName);
         }
         logger.timeEnd('deploy contract');
         return;
