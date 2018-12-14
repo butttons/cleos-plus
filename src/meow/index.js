@@ -17,8 +17,7 @@ const cli = meow(help, {
             type: 'string'
         },
         deploy: {
-            type: 'boolean',
-            default: false,
+            type: 'string',
             alias: 'd'
         },
         init: {
