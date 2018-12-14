@@ -6,7 +6,6 @@ const EOS_API_ENDPOINT = 'http://localhost:7777';
 
 const rpc = new JsonRpc(EOS_API_ENDPOINT, { fetch });
 
-//cleost push action eosio.token transfer '["zolotestmain", "xzoloescrowx", "100.000000 ZOLO", "memo"]' -d -j -p zolotestmain@active
 const { handles: { eosConfig } } = require('../db/index');
 module.exports = (DEFAULT_PRIVATE_KEY = eosConfig.owner.key) => {
     const signatureProvider = new JsSignatureProvider([ DEFAULT_PRIVATE_KEY ]);
