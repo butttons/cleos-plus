@@ -19,6 +19,7 @@ const EOS_TAPOS = {
     blocksBehind: 3,
     expireSeconds: 30
 };
+const hasConnRefused = (result) => result.toString().includes('ECONNREFUSED');
 const helpers = {
     createAccount: async (name) => {
         const exists = handles.exists('accounts', { name });
@@ -39,8 +40,13 @@ const helpers = {
             if (e instanceof RpcError) return { error: e.json };
             return e.message;
         });
-        if (typeof result.error !== 'undefined') {
+        if (typeof result.error !== 'undefined' || hasConnRefused(result)) {
+            if (hasConnRefused(result)) {
+                logger.error(result);
+                return;
+            }
             logger.error(result.error);
+            console.log(result.error);
             console.log(`cleos create account eosio ${name} ${keys.publicKeys.owner} ${keys.publicKeys.active}`);
         } else {
             handles.add('accounts', {
@@ -86,7 +92,11 @@ const helpers = {
             if (e instanceof RpcError) return { error: e.json };
             return e.message;
         });
-        if (typeof result.error !== 'undefined') {
+        if (typeof result.error !== 'undefined' || hasConnRefused(result)) {
+            if (hasConnRefused(result)) {
+                logger.error(result);
+                return;
+            }
             logger.error(result.error);
             console.log(result.error);
         } else {
