@@ -13,8 +13,9 @@ You can use this tool to speed up your development process. To deploy a contract
 
 ## Prerequisites:
 - Locally running eosio node. More info on how to get started here - [EOS Docker Quickstart](https://developers.eos.io/eosio-nodeos/docs/docker-quickstart).
-- One account on the blockchain. [How to create an account](https://developers.eos.io/eosio-home/docs/accounts-1).
 - [eosio.cdt](https://github.com/EOSIO/eosio.cdt).
+- *Optional. You can use the default eosio development keys provided too.* One account on the blockchain. [How to create an account](https://developers.eos.io/eosio-home/docs/accounts-1).
+
 
 ## How to use:
 - Create a config file first by `cleos-js -i`
@@ -29,7 +30,7 @@ You can use this tool to speed up your development process. To deploy a contract
     }
 }
 ```
-- Import changes by `cleos-js i`
+- Import changes by `cleos-js -c`
 - Verify that the config has been imported by `cleos-js --view-config`
 
 ## Contracts directory:
@@ -48,10 +49,10 @@ cleos-js --deploy-name=helloworld --deploy-dir=helloworld
 If you omit the `--deploy-dir` param, it will assume the contract directory name to be same as the `--deploy-name`.
 If `--deploy-name` account doesn't exist, it will create one.
 
-- Deploy current working directory contract:
+- Deploy current working directory contract to an account:
 ```
-cleos-js -d
+cleos-js -d=accountname
 ```
-This will deploy the contract in the current working directory. The account name will be assumed as the directory name.
+This will deploy the contract in the current working directory. If left blank, the account name will be assumed as the directory name.
 
 
