@@ -1,4 +1,4 @@
-# cleos-js
+# cleos-plus
 A helper tool to help develop EOS smart contracts.
 
 ## Installation:
