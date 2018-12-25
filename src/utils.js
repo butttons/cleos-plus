@@ -50,12 +50,13 @@ const initConfig = (fileName = 'jseos.config.json') => {
 };
 
 const hasConfig = () => {
+    if (typeof eosConfig === 'undefined') return false;
     const hasContractDir = eosConfig.contractDir.length > 0;
     const hasOwnerName = eosConfig.owner.name.length > 0;
     const hasOwnerKey = eosConfig.owner.key.length > 0;
-    return hasContractDir && hasOwnerKey && hasOwnerKey;
+    return hasContractDir && hasOwnerKey && hasOwnerName;
 };
 const noConfigErr = (logger) => {
     logger.error('No config file found. Init by cleos-js -i');
 };
-module.exports = { run, loggerFactory, isContractDir, initConfig, hasConfig };
+module.exports = { run, loggerFactory, isContractDir, initConfig, hasConfig, noConfigErr };
