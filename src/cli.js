@@ -3,7 +3,8 @@ require('console.table');
 const cli = require('./meow');
 const { handles } = require('./db');
 const eos = require('./eos/helpers');
-const { isContractDir, loggerFactory, initConfig, hasConfig } = require('./utils');
+const abiGenerator = require('./eos/example-generator');
+const { isContractDir, loggerFactory, initConfig, hasConfig, noConfigErr } = require('./utils');
 const logger = loggerFactory('eosjs-helper');
 const fs = require('fs');
 const path = require('path');
@@ -18,7 +19,8 @@ const path = require('path');
         deployThis: flagKeys.includes('deploy'),
         init: cli.flags.init,
         configSet: flagKeys.includes('config'),
-        configView: cli.flags.viewConfig
+        configView: cli.flags.viewConfig,
+        example: flagKeys.includes('example')
     };
     if (flags.list) {
         const accounts = handles.listAccounts();
@@ -47,9 +49,10 @@ const path = require('path');
             return;
         }
         logger.time('deploy contract');
+        const noCompile = cli.flags.noCompile;
         const accountName = cli.flags.deployName;
         const contractDir = cli.flags.deployDir ? cli.flags.deployDir : accountName;
-        await eos.deployContract(accountName, contractDir);
+        await eos.deployContract(accountName, contractDir, noCompile);
         logger.timeEnd('deploy contract');
         return;
     }
@@ -95,5 +98,14 @@ const path = require('path');
     if (flags.configView) {
         logger.info('Config: ');
         console.log(handles.eosConfig);
+        return;
+    }
+    if (flags.example) {
+        const contractName = cli.flags.example;
+        console.log('contractName', contractName);
+        const authAccount = typeof cli.flags.auth !== 'undefined' ? cli.flags.auth : contractName;
+        console.log('authAccount', authAccount);
+        await eos.testContract(contractName, authAccount);
+        //abiGenerator('zolotable');
     }
 })();
