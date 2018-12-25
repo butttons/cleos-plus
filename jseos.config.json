@@ -1,0 +1,8 @@
+{
+    "api": "http://localhost:7777",
+    "contractDir": "/home/yash/projects/zolo-poker/eos-dapp/eosio-contracts",
+    "owner": {
+        "name": "eosio",
+        "key": "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3"
+    }
+}
