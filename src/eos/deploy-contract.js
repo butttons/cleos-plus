@@ -1,8 +1,7 @@
 const fs = require(`fs`);
 const path = require(`path`);
-const { Serialize } = require(`eosjs`);
+const { Serialize, RpcError } = require(`eosjs`);
 const { deployContractTrx } = require('./transaction-factory');
-
 // Inspired from: https://cmichel.io/setcode-and-setabi-with-eos-js/
 
 function getDeployableFilesFromDir(dir) {
@@ -34,10 +33,16 @@ async function deployContract({ api, account, contractDir }) {
     const abiBuffer = Buffer.from(buffer.asUint8Array()).toString(`hex`);
     const transaction = deployContractTrx({ ownerName: account, wasm, abiBuffer });
 
-    const result = await api.transact(transaction, {
-        blocksBehind: 3,
-        expireSeconds: 30
-    });
-    return result;
+    const result = await api
+        .transact(transaction, {
+            blocksBehind: 3,
+            expireSeconds: 30
+        })
+        .catch((e) => {
+            if (e instanceof RpcError) return { error: e.json };
+            return { error: e.message };
+        });
+
+    return { result, transaction, abi };
 }
 module.exports = deployContract;
