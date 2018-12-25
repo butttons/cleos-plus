@@ -8,7 +8,9 @@ const logger = loggerFactory('eos');
 const { createAccountTrx } = require('./transaction-factory');
 const fs = require('fs');
 const { handles: { eosConfig } } = require('../db/index');
-const EOS_OWNER_NAME = eosConfig.owner.name;
+const { exampleGenerator } = require('./example-generator');
+
+const EOS_OWNER_NAME = typeof eosConfig.owner !== 'undefined' ? eosConfig.owner.name : 'eosio';
 const EOS_OWNER_AUTH = [
     {
         actor: EOS_OWNER_NAME,
@@ -74,24 +76,25 @@ const helpers = {
             return true;
         }
     },
-    deployContract: async (name, contractDir) => {
+    deployContract: async (name, contractDir, noCompile = false) => {
         const exists = handles.exists('accounts', { name });
         if (!exists) {
             logger.warn(`Account '${name}' does not exist. Creating one`);
             await helpers.createAccount(name);
-            return false;
         }
-        const compileSuccess = await helpers.compileContract(contractDir);
-        if (!compileSuccess) {
-            return false;
+        if (noCompile) {
+            logger.warn('Skipping compilation');
+        } else {
+            const compileSuccess = await helpers.compileContract(contractDir);
+            if (!compileSuccess) {
+                return false;
+            }
         }
         const account = exists;
         const { api, RpcError } = eosApiFactory(account.keys.privateKeys.active);
         const fullContractDir = path.resolve(eosConfig.contractDir, contractDir);
-        const result = await deployContract({ api, account: account.name, contractDir: fullContractDir }).catch((e) => {
-            if (e instanceof RpcError) return { error: e.json };
-            return e.message;
-        });
+        const { result, transaction, abi } = await deployContract({ api, account: account.name, contractDir: fullContractDir });
+
         if (typeof result.error !== 'undefined' || hasConnRefused(result)) {
             if (hasConnRefused(result)) {
                 logger.error(result);
@@ -102,12 +105,17 @@ const helpers = {
         } else {
             if (typeof result.transaction_id !== 'undefined') {
                 logger.success('Deployed contract');
-                handles.updateContract({ account: name, contract: result });
+                handles.updateContract({ account: name, contract: transaction, result, abi });
                 console.log(result);
             } else {
                 logger.warn(result);
             }
         }
+    },
+    testContract: async (contract, auth, data = false) => {
+        const contractData = handles.getContract(contract);
+        const exampleTransaction = exampleGenerator(auth, contractData.abi, data);
+        console.log('exampleTransaction', exampleTransaction[0].cleos);
     }
 };
 
