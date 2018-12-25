@@ -11,6 +11,9 @@ Options
   --deploy-name                         Account to deploy contract to
   --deploy-dir                          Contract directory
   --view-config                         View config
+  --example         -e                  Get sample transaction payload for given contract
+  --auth            -a                  Use given account as authorization
+  --id                                  Optional ID for smart contract version
 
 Examples
   $ cleos-js -i

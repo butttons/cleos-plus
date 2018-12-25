@@ -32,6 +32,21 @@ const cli = meow(help, {
         viewConfig: {
             type: 'boolean',
             default: false
+        },
+        example: {
+            type: 'string',
+            alias: 'e'
+        },
+        id: {
+            type: 'string'
+        },
+        auth: {
+            type: 'string',
+            alias: 'a'
+        },
+        noCompile: {
+            type: 'boolean',
+            default: false
         }
     }
 });
