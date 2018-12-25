@@ -10,5 +10,5 @@ const { handles: { eosConfig } } = require('../db/index');
 module.exports = (DEFAULT_PRIVATE_KEY = eosConfig.owner.key) => {
     const signatureProvider = new JsSignatureProvider([ DEFAULT_PRIVATE_KEY ]);
     const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
-    return { api, RpcError };
+    return { api, rpc, RpcError };
 };
