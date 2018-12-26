@@ -25,7 +25,7 @@ const path = require('path');
     if (flags.list) {
         const accounts = handles.listAccounts();
         if (accounts.length) {
-            logger.success(`Total ${accounts.length} accounts found`);
+            logger.success(`Total ${accounts.length} accounts found.`);
             console.table(accounts);
         } else {
             logger.warn('No accounts found.');
