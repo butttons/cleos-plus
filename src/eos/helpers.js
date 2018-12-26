@@ -60,7 +60,7 @@ const helpers = {
         }
     },
     compileContract: async (contractDir) => {
-        const fullContractDir = path.resolve(__dirname, '..', '..', '..', 'eosio-contracts', contractDir);
+        const fullContractDir = path.resolve(eosConfig.contractDir, contractDir);
         if (!fs.existsSync(fullContractDir)) {
             logger.error('Contract directory does not exist');
             return false;
