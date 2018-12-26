@@ -4,7 +4,7 @@ A helper tool to help develop EOS smart contracts.
 ## Installation:
 
 ```
-npm i -g cleos-js
+npm i -g cleos-plus
 ```
 
 ## Why?
