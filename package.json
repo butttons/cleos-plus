@@ -1,6 +1,6 @@
 {
     "name": "cleos-plus",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "A helper tool to help develop EOS smart contracts.",
     "main": "src/cli.js",
     "scripts": {

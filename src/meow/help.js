@@ -1,6 +1,6 @@
 module.exports = `
 Usage
-  $ cleos-js <input>
+  $ cleos-plus <input>
 
 Options
   --init,           -i                  Initialize 'jseos.config.json' config file to be edited
@@ -11,15 +11,20 @@ Options
   --deploy-name                         Account to deploy contract to
   --deploy-dir                          Contract directory
   --view-config                         View config
-  --example         -e                  Get sample transaction payload for given contract
-  --auth            -a                  Use given account as authorization
-  --id                                  Optional ID for smart contract version
 
+Testing contract options:
+  --test-contract                       Test a contract
+  --auth            -a                  Use given account as authorization
+  --payload                             Payload in JSON format
+  --action                              Name of action to test
+  
 Examples
-  $ cleos-js -i
-  $ cleos-js -c 
-  $ cleos-js --create-account=mytestacc
-  $ cleos-js --deploy-name=mytestacc --deploy-dir=mytestacc-contract
-  $ cleos-js -d
+  $ cleos-plus -i
+  $ cleos-plus -c 
+  $ cleos-plus --create-account=mytestacc
+  $ cleos-plus --deploy-name=mytestacc --deploy-dir=mytestacc-contract
+  $ cleos-plus -d
+  $ cleos-plus --deploy=accountname
+  $ cleos-plus --test-contract=mytestcontract --action=actionname --payload='["string", 5, 150,  "more string"]' --auth=authaccountname
 
 `;

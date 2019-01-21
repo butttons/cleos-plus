@@ -5,49 +5,61 @@ const cli = meow(help, {
         list: {
             type: 'boolean',
             default: false,
-            alias: 'l'
+            alias: 'l',
+        },
+        viewAccount: {
+            type: 'string',
         },
         createAccount: {
-            type: 'string'
+            type: 'string',
         },
         deployName: {
-            type: 'string'
+            type: 'string',
         },
         deployDir: {
-            type: 'string'
+            type: 'string',
         },
         deploy: {
             type: 'string',
-            alias: 'd'
+            alias: 'd',
         },
         init: {
             type: 'boolean',
             default: false,
-            alias: 'i'
+            alias: 'i',
         },
         config: {
             type: 'string',
-            alias: 'c'
+            alias: 'c',
         },
         viewConfig: {
             type: 'boolean',
-            default: false
+            default: false,
         },
         example: {
             type: 'string',
-            alias: 'e'
+            alias: 'e',
         },
         id: {
-            type: 'string'
+            type: 'string',
         },
         auth: {
             type: 'string',
-            alias: 'a'
+            alias: 'a',
         },
         noCompile: {
             type: 'boolean',
-            default: false
-        }
-    }
+            default: false,
+        },
+        testContract: {
+            type: 'string',
+        },
+        payload: {
+            type: 'string',
+        },
+        action: {
+            type: 'string',
+        },
+    },
 });
 module.exports = cli;

@@ -14,12 +14,12 @@ const EOS_OWNER_NAME = typeof eosConfig.owner !== 'undefined' ? eosConfig.owner.
 const EOS_OWNER_AUTH = [
     {
         actor: EOS_OWNER_NAME,
-        permission: 'active'
-    }
+        permission: 'active',
+    },
 ];
 const EOS_TAPOS = {
     blocksBehind: 3,
-    expireSeconds: 30
+    expireSeconds: 30,
 };
 const hasConnRefused = (result) => result.toString().includes('ECONNREFUSED');
 const helpers = {
@@ -35,7 +35,7 @@ const helpers = {
             ownerKey: keys.publicKeys.owner,
             activeKey: keys.publicKeys.active,
             authorization: EOS_OWNER_AUTH,
-            ownerName: EOS_OWNER_NAME
+            ownerName: EOS_OWNER_NAME,
         });
         const { api, RpcError } = eosApiFactory();
         const result = await api.transact(transaction, EOS_TAPOS).catch((e) => {
@@ -53,7 +53,7 @@ const helpers = {
         } else {
             handles.add('accounts', {
                 name,
-                keys
+                keys,
             });
             logger.success('Account created');
             console.log(result);
@@ -112,11 +112,64 @@ const helpers = {
             }
         }
     },
-    testContract: async (contract, auth, data = false) => {
+    testContract: async (contract, auth, action, payload = false) => {
         const contractData = handles.getContract(contract);
-        const exampleTransaction = exampleGenerator(auth, contractData.abi, data);
-        console.log('exampleTransaction', exampleTransaction[0].cleos);
-    }
+        const parsedPayload = JSON.parse(payload);
+        const abi = contractData.abi;
+        const actionData = abi.actions.find((a) => a.name == action);
+        if (actionData === undefined) {
+            return { error: 'Invalid action' };
+        }
+        const functionSig = abi.structs.find((struct) => struct.name === actionData.name);
+        let dataTrx = {};
+        if (parsedPayload instanceof Array) {
+            if (parsedPayload.length !== functionSig.fields.length) {
+                return { error: `Payload has ${parsedPayload.length} arguments, but function needs ${functionSig.fields.length}` };
+            }
+            dataTrx = functionSig.fields.reduce((acc, field, index) => {
+                acc[field.name] = parsedPayload[index];
+                return acc;
+            }, {});
+        } else {
+            dataTrx = parsedPayload;
+        }
+        const transaction = {
+            actions: [
+                {
+                    account: contract,
+                    name: action,
+                    authorization: [
+                        {
+                            actor: auth,
+                            permission: 'active',
+                        },
+                    ],
+                    data: dataTrx,
+                },
+            ],
+        };
+        const authAccount = handles.getKeys(auth);
+        if (authAccount === undefined) {
+            return { error: 'Auth account does not exist' };
+        }
+        const { api, RpcError } = eosApiFactory(authAccount.keys.privateKeys.active);
+        const result = await api.transact(transaction, EOS_TAPOS).catch((e) => {
+            if (e instanceof RpcError) return { error: e.json };
+            return e.message;
+        });
+        if ('error' in result || hasConnRefused(result)) {
+            if (hasConnRefused(result)) {
+                logger.error(result);
+                return;
+            }
+            console.log(result.error);
+        } else {
+            logger.success(`Transaction ID: ${result.transaction_id}`);
+
+            console.log(result);
+        }
+        return { success: 'Success' };
+    },
 };
 
 module.exports = helpers;

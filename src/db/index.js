@@ -2,6 +2,7 @@ const db = require('./low');
 const shortid = require('shortid');
 const handles = {
     list: (table = 'accounts') => db.get(table).value(),
+    getKeys: (account = '') => db.get('accounts').find({ name: account }).value(),
     add: (table = 'accounts', data = {}) => db.get(table).push(data).write(),
     exists: (table = 'accounts', where = { name: 'zolotoken' }) => db.get(table).find(where).value(),
     updateContract: ({ account, contract, result, abi }) => {
@@ -14,7 +15,7 @@ const handles = {
             time: Date.now(),
             contract,
             abi,
-            result
+            result,
         };
         db.get(`contracts.${account}`).push(data).write();
         db.get('accounts').find({ name: account }).assign({ currentContract: data.id }).write();
@@ -27,7 +28,7 @@ const handles = {
             const accountContracts = !hasContracts ? 0 : contracts[account.name].length;
             return {
                 name: account.name,
-                contracts_deployed: accountContracts
+                contracts_deployed: accountContracts,
             };
         });
     },
@@ -36,6 +37,6 @@ const handles = {
         return contract[0];
     },
     setConfig: (config) => db.set('config', config).write(),
-    eosConfig: db.get('config').value()
+    eosConfig: db.get('config').value(),
 };
 module.exports = { db, handles };

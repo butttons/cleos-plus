@@ -14,13 +14,15 @@ const path = require('path');
     const configExists = hasConfig();
     const flags = {
         list: cli.flags.list,
+        viewAccount: flagKeys.includes('viewAccount'),
         createAccount: flagKeys.includes('createAccount'),
         deployContract: flagKeys.includes('deployName'),
         deployThis: flagKeys.includes('deploy'),
         init: cli.flags.init,
         configSet: flagKeys.includes('config'),
         configView: cli.flags.viewConfig,
-        example: flagKeys.includes('example')
+        example: flagKeys.includes('example'),
+        testContract: flagKeys.includes('testContract'),
     };
     if (flags.list) {
         const accounts = handles.listAccounts();
@@ -31,6 +33,18 @@ const path = require('path');
             logger.warn('No accounts found.');
         }
         return;
+    }
+    if (flags.viewAccount) {
+        const account = cli.flags.viewAccount;
+        const accountData = handles.getKeys(account);
+        if (accountData === undefined) {
+            logger.warn('No account found');
+        } else {
+            const { keys } = accountData;
+            logger.info(`${account} keys:`);
+            console.log(`@owner:\nPrivate: ${keys.privateKeys.owner}\nPublic: ${keys.publicKeys.owner}`);
+            console.log(`@active:\nPrivate: ${keys.privateKeys.active}\nPublic: ${keys.publicKeys.active}`);
+        }
     }
     if (flags.createAccount) {
         if (!configExists) {
@@ -107,5 +121,19 @@ const path = require('path');
         console.log('authAccount', authAccount);
         await eos.testContract(contractName, authAccount);
         //abiGenerator('zolotable');
+    }
+    if (flags.testContract) {
+        const contract = cli.flags.testContract;
+        const auth = cli.flags.auth;
+        const payload = cli.flags.payload;
+        const action = cli.flags.action;
+        const output = await eos.testContract(contract, auth, action, payload);
+        if ('error' in output) {
+            logger.warn(output.error);
+        } else {
+            logger.success(output.success);
+        }
+        // const contractData = handles.getContract(contract);
+        // console.log('contractData:', contractData);
     }
 })();
