@@ -7,7 +7,9 @@ const { run, loggerFactory } = require('../utils');
 const logger = loggerFactory('eos');
 const { createAccountTrx } = require('./transaction-factory');
 const fs = require('fs');
-const { handles: { eosConfig } } = require('../db/index');
+const {
+    handles: { eosConfig },
+} = require('../db/index');
 const { exampleGenerator } = require('./example-generator');
 
 const EOS_OWNER_NAME = typeof eosConfig.owner !== 'undefined' ? eosConfig.owner.name : 'eosio';
@@ -21,9 +23,9 @@ const EOS_TAPOS = {
     blocksBehind: 3,
     expireSeconds: 30,
 };
-const hasConnRefused = (result) => result.toString().includes('ECONNREFUSED');
+const hasConnRefused = result => result.toString().includes('ECONNREFUSED');
 const helpers = {
-    createAccount: async (name) => {
+    createAccount: async name => {
         const exists = handles.exists('accounts', { name });
         if (!!exists) {
             logger.warn('Account exists:', exists);
@@ -38,7 +40,7 @@ const helpers = {
             ownerName: EOS_OWNER_NAME,
         });
         const { api, RpcError } = eosApiFactory();
-        const result = await api.transact(transaction, EOS_TAPOS).catch((e) => {
+        const result = await api.transact(transaction, EOS_TAPOS).catch(e => {
             if (e instanceof RpcError) return { error: e.json };
             return e.message;
         });
@@ -59,7 +61,7 @@ const helpers = {
             console.log(result);
         }
     },
-    compileContract: async (contractDir) => {
+    compileContract: async contractDir => {
         const fullContractDir = path.resolve(eosConfig.contractDir, contractDir);
         if (!fs.existsSync(fullContractDir)) {
             logger.error('Contract directory does not exist');
@@ -116,11 +118,11 @@ const helpers = {
         const contractData = handles.getContract(contract);
         const parsedPayload = JSON.parse(payload);
         const abi = contractData.abi;
-        const actionData = abi.actions.find((a) => a.name == action);
+        const actionData = abi.actions.find(a => a.name == action);
         if (actionData === undefined) {
             return { error: 'Invalid action' };
         }
-        const functionSig = abi.structs.find((struct) => struct.name === actionData.name);
+        const functionSig = abi.structs.find(struct => struct.name === actionData.name);
         let dataTrx = {};
         if (parsedPayload instanceof Array) {
             if (parsedPayload.length !== functionSig.fields.length) {
@@ -153,11 +155,11 @@ const helpers = {
             return { error: 'Auth account does not exist' };
         }
         const { api, RpcError } = eosApiFactory(authAccount.keys.privateKeys.active);
-        const result = await api.transact(transaction, EOS_TAPOS).catch((e) => {
+        const result = await api.transact(transaction, EOS_TAPOS).catch(e => {
             if (e instanceof RpcError) return { error: e.json };
             return e.message;
         });
-        if ('error' in result || hasConnRefused(result)) {
+        if (result.error !== undefined) {
             if (hasConnRefused(result)) {
                 logger.error(result);
                 return;

@@ -3,16 +3,18 @@ const exec = promisify(require('child_process').exec);
 const signale = require('signale');
 const fs = require('fs');
 const path = require('path');
-const { handles: { eosConfig } } = require('./db');
+const {
+    handles: { eosConfig },
+} = require('./db');
 
-const parseOutput = (output) => {
+const parseOutput = output => {
     const trimmed = output.trim();
     return trimmed[0] === '{' ? JSON.parse(trimmed) : trimmed;
 };
 const run = async (command, options) => {
     let output = {
         success: false,
-        error: false
+        error: false,
     };
     try {
         execOutput = await exec(command, options);
@@ -23,15 +25,15 @@ const run = async (command, options) => {
     return output;
 };
 
-const loggerFactory = (scope) => signale.scope(scope);
-const isContractDir = (dir) => {
+const loggerFactory = scope => signale.scope(scope);
+const isContractDir = dir => {
     const files = fs.readdirSync(dir);
     const currentDir = path.parse(dir);
     const contractName = currentDir.name;
     const hasCpp = files.includes(`${contractName}.cpp`);
     return {
         contractName,
-        validDir: hasCpp
+        validDir: hasCpp,
     };
 };
 
@@ -41,8 +43,8 @@ const initConfig = (fileName = 'jseos.config.json') => {
         contractDir: '',
         owner: {
             name: 'eosio',
-            key: '5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'
-        }
+            key: '5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3',
+        },
     };
     const fullPath = path.resolve(process.cwd(), fileName);
     fs.writeFileSync(fullPath, JSON.stringify(config, null, 4));
@@ -50,13 +52,13 @@ const initConfig = (fileName = 'jseos.config.json') => {
 };
 
 const hasConfig = () => {
-    if (typeof eosConfig === 'undefined') return false;
+    if (typeof eosConfig.contractDir === 'undefined') return false;
     const hasContractDir = eosConfig.contractDir.length > 0;
     const hasOwnerName = eosConfig.owner.name.length > 0;
     const hasOwnerKey = eosConfig.owner.key.length > 0;
     return hasContractDir && hasOwnerKey && hasOwnerName;
 };
-const noConfigErr = (logger) => {
+const noConfigErr = logger => {
     logger.error('No config file found. Init by cleos-js -i');
 };
 module.exports = { run, loggerFactory, isContractDir, initConfig, hasConfig, noConfigErr };
