@@ -26,5 +26,5 @@ Examples
   $ cleos-plus -d
   $ cleos-plus --deploy=accountname
   $ cleos-plus --test-contract=mytestcontract --action=actionname --payload='["string", 5, 150,  "more string"]' --auth=authaccountname
-
+  $ cleos-plus --view-config
 `;
